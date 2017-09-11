@@ -59,7 +59,7 @@ def getData():
 
     customCriteria = x.factory.create('customReportCriteria')
     customCriteria.time = {'end' : end, 'start' : start}
-    folderName = 'Daily Reports'
+    folderName = 'Call Log Reports'
     reportName = 'Call Log'
     reportObjectList = x.factory.create('reportObjectList')
     reportObjectList.objectType.value = 'Campaign'
