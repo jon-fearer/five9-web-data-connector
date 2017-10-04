@@ -1,6 +1,6 @@
 from flask import Flask, jsonify, render_template, request
 from suds.client import Client
-from json import dumps, loads
+from json import dumps
 from xmljson import badgerfish as bf
 from xml.etree.ElementTree import fromstring
 from BeautifulSoup import BeautifulSoup
@@ -20,18 +20,10 @@ def getData():
     headers = {'Content-Type' : 'text/xml;charset=UTF-8', 'Authorization': auth}
     x = Client(url, headers=headers, retxml=True)
 
-    output = x.service.getCampaigns()
-    outputclean = output.replace('env:','').replace('soap:',''). \
-                  replace(' xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"',''). \
-                  replace(' xmlns:env=\'http://schemas.xmlsoap.org/soap/envelope/\'',''). \
-                  replace('ns2:',''). \
-                  replace(' xmlns:ns2="http://service.admin.ws.five9.com/"','')
-    outputjson = dumps(bf.data(fromstring(outputclean)), indent=4, separators=(',', ': '))
-    camps = loads(outputjson)
+    campaignXML = x.service.getCampaigns()
+    campaignSoup = BeautifulSoup(campaignXML)
     campaigns = []
-    camplen = len(camps['Envelope']['Body']['getCampaignsResponse']['return'])
-    for i in range(0,camplen):
-        campaigns.append(camps['Envelope']['Body']['getCampaignsResponse']['return'][i]['name']['$'])
+    for n in campaignSoup.findAll('name'): campaigns.append(n.contents[0])
 
     enddate = datetime.now().isoformat()[:-3]+'-07:00'
     startdate = (datetime.now() + timedelta(days=-30)).isoformat()[:-3]+'-07:00'
@@ -55,12 +47,10 @@ def getData():
         soup = BeautifulSoup(isReportRunningResponse)
         response = soup.find('return').string
 
-    getReportResultResponse = x.service.getReportResult(reportID)
-    output = getReportResultResponse.replace('env:Envelope xmlns:env=\'http://schemas.xmlsoap.org/soap/envelope/\'','Envelope') \
-             .replace('env:','').replace('ns2:getReportResultResponse xmlns:ns2="http://service.admin.ws.five9.com/"','getReportResultResponse') \
-             .replace(' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:nil="true"','').replace('ns2:','') \
-             .replace('soap:','').replace(' xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"','')
-    outputjson = dumps(bf.data(fromstring(output)))
+    getReportResultResponseXML = x.service.getReportResult(reportID)
+    content, end = getReportResultResponseXML.split('<return>')[1].split('</return>')
+    content = '<return>'+content+'</return>'
+    outputjson = dumps(bf.data(fromstring(content)))
     return outputjson
 
 if __name__ == '__main__':

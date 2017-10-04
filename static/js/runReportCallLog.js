@@ -54,7 +54,7 @@
                 data: formdata,
                 dataType: "json",
                 success: function(resp) {
-                  var feat = resp.Envelope.Body.getReportResultResponse.return.records;
+                  var feat = resp.return.records;
                   tableData = [];
 
                   // Iterate over the JSON object
