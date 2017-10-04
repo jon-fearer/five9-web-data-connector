@@ -33,33 +33,12 @@ def getData():
     for i in range(0,camplen):
         campaigns.append(camps['Envelope']['Body']['getCampaignsResponse']['return'][i]['name']['$'])
 
-    enddate = datetime.today() + timedelta(days=1)
-    if (enddate.month >= 10):
-        if (enddate.day >= 10):
-            end = str(enddate.year)+'-'+str(enddate.month)+'-'+str(enddate.day)+'T12:00:00.000-07:00'
-        else:
-            end = str(enddate.year)+'-'+str(enddate.month)+'-0'+str(enddate.day)+'T12:00:00.000-07:00'
-    else:
-        if (enddate.day >= 10):
-            end = str(enddate.year)+'-0'+str(enddate.month)+'-'+str(enddate.day)+'T12:00:00.000-07:00'
-        else:
-            end = str(enddate.year)+'-0'+str(enddate.month)+'-0'+str(enddate.day)+'T12:00:00.000-07:00'
-
-    startdate = datetime.today() + timedelta(days=-35)
-    if (startdate.month >= 10):
-        if (startdate.day >= 10):
-            start = str(startdate.year)+'-'+str(startdate.month)+'-'+str(startdate.day)+'T12:00:00.000-07:00'
-        else:
-            start = str(startdate.year)+'-'+str(startdate.month)+'-0'+str(startdate.day)+'T12:00:00.000-07:00'
-    else:
-        if (startdate.day >= 10):
-            start = str(startdate.year)+'-0'+str(startdate.month)+'-'+str(startdate.day)+'T12:00:00.000-07:00'
-        else:
-            start = str(startdate.year)+'-0'+str(startdate.month)+'-0'+str(startdate.day)+'T12:00:00.000-07:00'
+    enddate = datetime.now().isoformat()[:-3]+'-07:00'
+    startdate = (datetime.now() + timedelta(days=-30)).isoformat()[:-3]+'-07:00'
 
     customCriteria = x.factory.create('customReportCriteria')
-    customCriteria.time = {'end' : end, 'start' : start}
-    folderName = 'Call Log Reports'
+    customCriteria.time = {'end' : enddate, 'start' : startdate}
+    folderName = 'Daily Reports'
     reportName = 'Call Log'
     reportObjectList = x.factory.create('reportObjectList')
     reportObjectList.objectType.value = 'Campaign'
