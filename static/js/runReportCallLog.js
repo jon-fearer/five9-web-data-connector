@@ -6,7 +6,7 @@
       var credentials = document.getElementsByName("username")[0].value+":"+document.getElementsByName("password")[0].value;
       var formdata = {"cred" : credentials};
       tableau.connectionData = JSON.stringify(formdata);
-      tableau.submit();  //end of interactive phase
+      tableau.submit();
     }; //end of proxyrequest
 
       myConnector.getSchema = function (schemaCallback) {
