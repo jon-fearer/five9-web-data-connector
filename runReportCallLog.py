@@ -26,7 +26,7 @@ def getData():
     for n in campaignSoup.findAll('name'): campaigns.append(n.contents[0])
 
     enddate = datetime.now().isoformat()[:-3]+'-07:00'
-    startdate = (datetime.now() + timedelta(days=-30)).isoformat()[:-3]+'-07:00'
+    startdate = (datetime.now() + timedelta(days=-29)).isoformat()[:-3]+'-07:00'
 
     customCriteria = x.factory.create('customReportCriteria')
     customCriteria.time = {'end' : enddate, 'start' : startdate}
