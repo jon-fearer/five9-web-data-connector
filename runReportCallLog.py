@@ -26,8 +26,8 @@ def getData():
     for n in campaignSoup.findAll('name'): campaigns.append(n.contents[0])
 
     customCriteria = x.factory.create('customReportCriteria')
-    folderName = 'Daily Reports'
-    reportName = 'Call Log'
+    folderName = 'Call Log Reporting'
+    reportName = 'Call Log All - Jon'
     reportObjectList = x.factory.create('reportObjectList')
     reportObjectList.objectType.value = 'Campaign'
     reportObjectList.objectNames = campaigns
@@ -57,7 +57,7 @@ def getData():
         else:
             missingTimestamp = False
             outputjson = dumps(bf.data(fromstring(content)))
-            return outputjson
+    return outputjson
     
 if __name__ == '__main__':
     app.run()
