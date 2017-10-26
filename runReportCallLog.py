@@ -36,7 +36,7 @@ def getData():
     missingTimestamp = True
     while(missingTimestamp):
         enddate = datetime.now().isoformat()[:-3]+'-07:00'
-        startdate = (datetime.now() + timedelta(days=-70)).isoformat()[:-3]+'-07:00'
+        startdate = (datetime.now() + timedelta(days=-5)).isoformat()[:-3]+'-07:00'
         customCriteria.time = {'end' : enddate, 'start' : startdate}
         
         runReportResponse = x.service.runReport(folderName,reportName,customCriteria)
