@@ -11,8 +11,6 @@
 
       myConnector.getSchema = function (schemaCallback) {
         var cols = [
-          { id : "Date", alias : "Date", columnRole: "dimension", dataType : tableau.dataTypeEnum.date },
-          { id : "Time", alias : "Time", columnRole: "dimension", dataType : tableau.dataTypeEnum.string },
           { id : "Timestamp", alias : "Timestamp", columnRole: "dimension", dataType : tableau.dataTypeEnum.datetime },
           { id : "Abandoned", alias : "Abandoned", columnRole: "dimension", dataType : tableau.dataTypeEnum.int },
           { id : "CustomerName", alias : "CustomerName", columnRole: "dimension", dataType : tableau.dataTypeEnum.string },
@@ -62,8 +60,6 @@
                   // Iterate over the JSON object
                   for (var i = 0, len = feat.length; i < len; i++) {
                             tableData.push({
-                                "Date": feat[i].values.data[0].$,
-                                "Time": feat[i].values.data[1].$,
                                 "Timestamp" : feat[i].values.data[0].$.replace('/','-').replace('/','-')+' '+feat[i].values.data[1].$+'.000',
                                 "Abandoned": feat[i].values.data[2].$,
                                 "CustomerName": feat[i].values.data[3].$,
