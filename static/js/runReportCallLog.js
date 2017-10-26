@@ -64,7 +64,7 @@
                             tableData.push({
                                 "Date": feat[i].values.data[0].$,
                                 "Time": feat[i].values.data[1].$,
-                                "Timestamp" : feat[i].values.data[0].$.replace('/','').replace('/','')+' '+feat[i].values.data[1].$,
+                                "Timestamp" : feat[i].values.data[0].$.replace('/','-').replace('/','-')+' '+feat[i].values.data[1].$+'.000',
                                 "Abandoned": feat[i].values.data[2].$,
                                 "CustomerName": feat[i].values.data[3].$,
                                 "ANI": feat[i].values.data[4].$,
