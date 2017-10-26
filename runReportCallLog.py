@@ -25,11 +25,7 @@ def getData():
     campaigns = []
     for n in campaignSoup.findAll('name'): campaigns.append(n.contents[0])
 
-    enddate = datetime.now().isoformat()[:-3]+'-07:00'
-    startdate = (datetime.now() + timedelta(days=-29)).isoformat()[:-3]+'-07:00'
-
     customCriteria = x.factory.create('customReportCriteria')
-    customCriteria.time = {'end' : enddate, 'start' : startdate}
     folderName = 'Daily Reports'
     reportName = 'Call Log'
     reportObjectList = x.factory.create('reportObjectList')
@@ -37,21 +33,31 @@ def getData():
     reportObjectList.objectNames = campaigns
     customCriteria.reportObjects = [reportObjectList]
 
-    runReportResponse = x.service.runReport(folderName,reportName,customCriteria)
-    soup = BeautifulSoup(runReportResponse)
-    reportID = soup.find('return').string
+    missingTimestamp = True
+    while(missingTimestamp):
+        enddate = datetime.now().isoformat()[:-3]+'-07:00'
+        startdate = (datetime.now() + timedelta(days=-70)).isoformat()[:-3]+'-07:00'
+        customCriteria.time = {'end' : enddate, 'start' : startdate}
+        
+        runReportResponse = x.service.runReport(folderName,reportName,customCriteria)
+        soup = BeautifulSoup(runReportResponse)
+        reportID = soup.find('return').string
 
-    response = 'true'
-    while (response == 'true'):
-        isReportRunningResponse = x.service.isReportRunning(reportID,'10')
-        soup = BeautifulSoup(isReportRunningResponse)
-        response = soup.find('return').string
+        response = 'true'
+        while (response == 'true'):
+            isReportRunningResponse = x.service.isReportRunning(reportID,'10')
+            soup = BeautifulSoup(isReportRunningResponse)
+            response = soup.find('return').string
 
-    getReportResultResponseXML = x.service.getReportResult(reportID)
-    content, end = getReportResultResponseXML.split('<return>')[1].split('</return>')
-    content = '<return>'+content+'</return>'
-    outputjson = dumps(bf.data(fromstring(content)))
-    return outputjson
-
+        getReportResultResponseXML = x.service.getReportResult(reportID)
+        content, end = getReportResultResponseXML.split('<return>')[1].split('</return>')
+        content = '<return>'+content+'</return>'
+        if '</header><records><values><data xmlns' in content[:1780]:
+            missingTimestamp = True
+        else:
+            missingTimestamp = False
+            outputjson = dumps(bf.data(fromstring(content)))
+            return outputjson
+    
 if __name__ == '__main__':
     app.run()
