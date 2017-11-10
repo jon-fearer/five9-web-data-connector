@@ -36,7 +36,8 @@
           { id : "PracticeAdvocate", alias : "PracticeAdvocate", columnRole : "dimension", dataType : tableau.dataTypeEnum.string },
           { id : "PracticeId", alias : "PracticeId", columnRole : "dimension", dataType : tableau.dataTypeEnum.int },
           { id : "TalkTime", alias : "TalkTime", columnRole : "measure", dataType : tableau.dataTypeEnum.int },
-          { id : "Skill", alias : "Skill", columnRole : "dimension", dataType : tableau.dataTypeEnum.string }
+          { id : "Skill", alias : "Skill", columnRole : "dimension", dataType : tableau.dataTypeEnum.string },
+          { id : "SpeedOfAnswer", alias: "SpeedOfAnswer", columnRole : "measure", dataType : tableau.dataTypeEnum.int }
         ];
 
         var tableInfo = {
@@ -95,7 +96,8 @@
                                 "PracticeAdvocate": feat[i].values.data[23].$,
                                 "PracticeId": feat[i].values.data[24].$,
                                 "TalkTime": timeParser(feat[i].values.data[25].$),
-                                "Skill": feat[i].values.data[26].$
+                                "Skill": feat[i].values.data[26].$,
+                                "SpeedOfAnswer": timeParser(feat[i].values.data[27].$)
                           });
 
                       }
