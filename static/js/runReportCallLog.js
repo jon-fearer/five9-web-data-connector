@@ -38,7 +38,8 @@
           { id : "TalkTime", alias : "TalkTime", columnRole : "measure", dataType : tableau.dataTypeEnum.int },
           { id : "Skill", alias : "Skill", columnRole : "dimension", dataType : tableau.dataTypeEnum.string },
           { id : "SpeedOfAnswer", alias: "SpeedOfAnswer", columnRole : "measure", dataType : tableau.dataTypeEnum.int },
-          { id : "DaysPastDue", alias: "DaysPastDue", columnRole : "measure", dataType : tableau.dataTypeEnum.int }
+          { id : "DaysPastDue", alias: "DaysPastDue", columnRole : "measure", dataType : tableau.dataTypeEnum.int },
+          { id : "LookupKey", alias: "LookupKey", columnRole : "measure", dataType : tableau.dataTypeEnum.string }
         ];
 
         var tableInfo = {
@@ -99,7 +100,8 @@
                                 "TalkTime": timeParser(feat[i].values.data[25].$),
                                 "Skill": feat[i].values.data[26].$,
                                 "SpeedOfAnswer": timeParser(feat[i].values.data[27].$),
-                                "DaysPastDue": feat[i].values.data[28].$
+                                "DaysPastDue": feat[i].values.data[28].$,
+                                "LookupKey": feat[i].values.data[3].$.split(' ',2)[0]+feat[i].values.data[3].$.split(' ',2)[1]+feat[i].values.data[21].$.replace(' ','')
                           });
 
                       }
