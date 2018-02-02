@@ -11,34 +11,30 @@
 
       myConnector.getSchema = function (schemaCallback) {
         var cols = [
-          { id : "Timestamp", alias : "Timestamp", columnRole: "dimension", dataType : tableau.dataTypeEnum.datetime },
-          { id : "Abandoned", alias : "Abandoned", columnRole: "dimension", dataType : tableau.dataTypeEnum.int },
-          { id : "CustomerName", alias : "CustomerName", columnRole: "dimension", dataType : tableau.dataTypeEnum.string },
-          { id : "ANI", alias : "ANI", columnRole: "dimension", dataType : tableau.dataTypeEnum.int },
           { id : "CallId", alias : "CallId", columnRole: "dimension", dataType : tableau.dataTypeEnum.int },
-          { id : "CallType", alias : "CallType", columnRole: "dimension", dataType : tableau.dataTypeEnum.string },
+          { id : "Timestamp", alias : "Timestamp", columnRole: "dimension", dataType : tableau.dataTypeEnum.datetime },
           { id : "Campaign", alias : "Campaign", columnRole: "dimension", dataType : tableau.dataTypeEnum.string },
-          { id : "Disposition", alias : "Disposition", columnRole: "dimension", dataType : tableau.dataTypeEnum.string },
-          { id : "DNIS", alias : "DNIS", columnRole: "dimension", dataType : tableau.dataTypeEnum.int },
-          { id : "AfterCallWorkTime", alias : "AfterCallWorkTime", columnRole: "measure", dataType : tableau.dataTypeEnum.int },
-          //{ id : "HandleTime", alias : "HandleTime", columnRole: "measure", dataType : tableau.dataTypeEnum.int },
-          { id : "QueueWaitTime", alias : "QueueWaitTime", columnRole: "measure", dataType : tableau.dataTypeEnum.int },
-          //{ id : "BillTime", alias : "BillTime", columnRole: "measure", dataType : tableau.dataTypeEnum.int },
-          //{ id : "HoldTime", alias : "HoldTime", columnRole: "measure", dataType : tableau.dataTypeEnum.int },
-          //{ id : "ParkTime", alias : "ParkTime", columnRole: "measure", dataType : tableau.dataTypeEnum.int },
-          //{ id : "TimeToAbandon", alias : "TimeToAbandon", columnRole: "measure", dataType : tableau.dataTypeEnum.int },
-          //{ id : "CallTime", alias : "CallTime", columnRole: "measure", dataType : tableau.dataTypeEnum.int },
-          //{ id : "Cost", alias : "Cost", columnRole: "measure", dataType : tableau.dataTypeEnum.float },
+          { id : "CallType", alias : "CallType", columnRole: "dimension", dataType : tableau.dataTypeEnum.string },
           { id : "AgentEmail", alias : "AgentEmail", columnRole: "dimension", dataType : tableau.dataTypeEnum.string },
-          { id : "AgentGroup", alias : "AgentGroup", columnRole: "dimension", dataType : tableau.dataTypeEnum.string },
-          { id : "Practice", alias : "Practice", columnRole : "dimension", dataType : tableau.dataTypeEnum.string },
-          { id : "ContactType", alias : "ContactType", columnRole : "dimension", dataType : tableau.dataTypeEnum.string },
-          { id : "PracticeAdvocate", alias : "PracticeAdvocate", columnRole : "dimension", dataType : tableau.dataTypeEnum.string },
-          //{ id : "PracticeId", alias : "PracticeId", columnRole : "dimension", dataType : tableau.dataTypeEnum.int },
-          { id : "TalkTime", alias : "TalkTime", columnRole : "measure", dataType : tableau.dataTypeEnum.int },
-          //{ id : "Skill", alias : "Skill", columnRole : "dimension", dataType : tableau.dataTypeEnum.string },
-          { id : "SpeedOfAnswer", alias: "SpeedOfAnswer", columnRole : "measure", dataType : tableau.dataTypeEnum.int },
-          { id : "DaysPastDue", alias: "DaysPastDue", columnRole : "measure", dataType : tableau.dataTypeEnum.int }
+          { id : "AgentName", alias : "AgentName", columnRole: "dimension", dataType : tableau.dataTypeEnum.string },
+          { id : "Disposition", alias : "Disposition", columnRole: "dimension", dataType : tableau.dataTypeEnum.string },
+          { id : "ANI", alias : "ANI", columnRole: "dimension", dataType : tableau.dataTypeEnum.int },
+          { id : "CustomerName", alias : "CustomerName", columnRole: "dimension", dataType : tableau.dataTypeEnum.string },
+          { id : "DNIS", alias : "DNIS", columnRole: "dimension", dataType : tableau.dataTypeEnum.int },
+          { id : "CallTime", alias : "CallTime", columnRole: "measure", dataType : tableau.dataTypeEnum.int },
+          { id : "BillTime", alias : "BillTime", columnRole: "measure", dataType : tableau.dataTypeEnum.int },
+          { id : "Cost", alias : "Cost", columnRole: "measure", dataType : tableau.dataTypeEnum.float },
+          { id : "IVRTime", alias : "IVRTime", columnRole: "measure", dataType : tableau.dataTypeEnum.int },
+          { id : "QueueWaitTime", alias : "QueueWaitTime", columnRole: "measure", dataType : tableau.dataTypeEnum.int },
+          { id : "RingTime", alias : "RingTime", columnRole: "measure", dataType : tableau.dataTypeEnum.int },
+          { id : "TalkTime", alias : "TalkTime", columnRole: "measure", dataType : tableau.dataTypeEnum.int },
+          { id : "HoldTime", alias : "HoldTime", columnRole: "measure", dataType : tableau.dataTypeEnum.int },
+          { id : "ParkTime", alias : "ParkTime", columnRole: "measure", dataType : tableau.dataTypeEnum.int },
+          { id : "AfterCallWorkTime", alias : "AfterCallWorkTime", columnRole: "measure", dataType : tableau.dataTypeEnum.int },
+          { id : "Transfers", alias : "Transfers", columnRole: "measure", dataType : tableau.dataTypeEnum.int },
+          { id : "Conferences", alias : "Conferences", columnRole: "measure", dataType : tableau.dataTypeEnum.int },
+          { id : "Holds", alias : "Holds", columnRole: "measure", dataType : tableau.dataTypeEnum.int },
+          { id : "Abandoned", alias : "Abandoned", columnRole: "dimension", dataType : tableau.dataTypeEnum.int }
         ];
 
         var tableInfo = {
@@ -54,52 +50,60 @@
         var formdata = JSON.parse(tableau.connectionData);
 
         function timeParser(timeField) {
-          if (typeof timeField != "undefined") {
+          if (typeof timeField != "undefined" & timeField != null) {
             return parseInt(timeField.split(':')[0]*60*60)+parseInt(timeField.split(':')[1]*60)+parseInt(timeField.split(':')[2]);
           } else {
             return null;
           }
         };
 
+        function getMonthFromString(mon){
+           var d = Date.parse(mon + "1, 2012");
+           if(!isNaN(d)){
+              return new Date(d).getMonth() + 1;
+           }
+           return -1;
+         };
+
         $.ajax({type: "POST",
                 url: "../../response",
                 data: formdata,
                 dataType: "json",
                 success: function(resp) {
-                  var feat = resp.return.records;
                   tableData = [];
-
                   // Iterate over the JSON object
-                  for (var i = 0, len = feat.length; i < len; i++) {
+                  for (var i = 0, len = resp.length; i < len; i++) {
+                            if (typeof resp[i][1] != "undefined" & resp[i][1] != null) {
+                              var y = resp[i][1].split(' ');
+                              var ts = getMonthFromString(y[2])+'/'+y[1]+'/'+y[3]+' '+y[4];
+                            } else {
+                              var ts = null;
+                            };
                             tableData.push({
-                                "Timestamp" : feat[i].values.data[0].$.replace('/','-').replace('/','-')+' '+feat[i].values.data[1].$+'.000',
-                                "Abandoned": feat[i].values.data[2].$,
-                                "CustomerName": feat[i].values.data[3].$,
-                                "ANI": feat[i].values.data[4].$,
-                                "CallId": feat[i].values.data[5].$,
-                                "CallType": feat[i].values.data[6].$,
-                                "Campaign": feat[i].values.data[7].$,
-                                "Disposition" : feat[i].values.data[8].$,
-                                "DNIS": feat[i].values.data[9].$,
-                                "AfterCallWorkTime": timeParser(feat[i].values.data[10].$),
-                                //"HandleTime": timeParser(feat[i].values.data[11].$),
-                                "QueueWaitTime": timeParser(feat[i].values.data[11].$),
-                                //"BillTime": timeParser(feat[i].values.data[13].$),
-                                //"HoldTime": timeParser(feat[i].values.data[14].$),
-                                //"ParkTime": timeParser(feat[i].values.data[15].$),
-                                //"TimeToAbandon": timeParser(feat[i].values.data[16].$),
-                                //"CallTime": timeParser(feat[i].values.data[17].$),
-                                //"Cost": feat[i].values.data[18].$,
-                                "AgentEmail": feat[i].values.data[12].$,
-                                "AgentGroup": feat[i].values.data[13].$,
-                                "Practice": feat[i].values.data[14].$,
-                                "ContactType": feat[i].values.data[15].$,
-                                "PracticeAdvocate": feat[i].values.data[16].$,
-                                //"PracticeId": feat[i].values.data[24].$,
-                                "TalkTime": timeParser(feat[i].values.data[17].$),
-                                //"Skill": feat[i].values.data[26].$,
-                                "SpeedOfAnswer": timeParser(feat[i].values.data[18].$),
-                                "DaysPastDue": feat[i].values.data[19].$
+                                "CallId" : resp[i][0],
+                                "Timestamp" : ts,
+                                "Campaign" : resp[i][2],
+                                "CallType" : resp[i][3],
+                                "AgentEmail" : resp[i][4],
+                                "AgentName" : resp[i][5],
+                                "Disposition" : resp[i][6],
+                                "ANI" : resp[i][7],
+                                "CustomerName" : resp[i][8],
+                                "DNIS" : resp[i][9],
+                                "CallTime" : timeParser(resp[i][10]),
+                                "BillTime" : timeParser(resp[i][11]),
+                                "Cost" : resp[i][12],
+                                "IVRTime" : timeParser(resp[i][13]),
+                                "QueueWaitTime" : timeParser(resp[i][14]),
+                                "RingTime" : timeParser(resp[i][15]),
+                                "TalkTime" : timeParser(resp[i][16]),
+                                "HoldTime" : timeParser(resp[i][17]),
+                                "ParkTime" : timeParser(resp[i][18]),
+                                "AfterCallWorkTime" : timeParser(resp[i][19]),
+                                "Transfers" : resp[i][20],
+                                "Conferences" : resp[i][21],
+                                "Holds" : resp[i][22],
+                                "Abandoned" : resp[i][23]
                           });
 
                       }
