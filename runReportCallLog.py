@@ -56,58 +56,8 @@ def getData():
             data = []
             rundate = datetime.now()
             for record in soup.findAll('records'):
-                for col,value in enumerate(record.findAll('data')):
-                    if col == 0:
-                        callid = value.string
-                    elif col == 1:
-                        ts = value.string
-                    elif col == 2:
-                        campaign = value.string
-                    elif col == 3:
-                        calltype = value.string
-                    elif col == 4:
-                        agent = value.string
-                    elif col == 5:
-                        agentname = value.string
-                    elif col == 6:
-                        dispo = value.string
-                    elif col == 7:
-                        ani = value.string
-                    elif col == 8:
-                        customer = value.string
-                    elif col == 9:
-                        dnis = value.string
-                    elif col == 10:
-                        calltime = value.string
-                    elif col == 11:
-                        billtime = value.string
-                    elif col == 12:
-                        cost = value.string
-                    elif col == 13:
-                        ivrtime = value.string
-                    elif col == 14:
-                        qwt = value.string
-                    elif col == 15:
-                        rt = value.string
-                    elif col == 16:
-                        tt = value.string
-                    elif col == 17:
-                        ht = value.string
-                    elif col == 18:
-                        parktime = value.string
-                    elif col == 19:
-                        acwt = value.string
-                    elif col == 20:
-                        transfers = value.string
-                    elif col == 21:
-                        conf = value.string
-                    elif col == 22:
-                        holds = value.string
-                    elif col == 23:
-                        abandoned = value.string
-                data.append([callid,ts,campaign,calltype,agent,agentname,dispo,ani,customer,\
-                                          dnis,calltime,billtime,cost,ivrtime,qwt,rt,tt,ht,parktime,acwt,\
-                                          transfers,conf,holds,abandoned])
+                item = record.findAll('data')
+                data.append([value.string for value in item])
     return jsonify(data)
     
 if __name__ == '__main__':
