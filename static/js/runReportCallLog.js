@@ -4,7 +4,9 @@
     function proxyrequest() {
       tableau.connectionName = "Five9CallLog";
       var credentials = document.getElementsByName("username")[0].value+":"+document.getElementsByName("password")[0].value;
-      var formdata = {"cred" : credentials};
+      var startDate = document.getElementsByName("startDate")[0].value
+      var endDate = document.getElementsByName("endDate")[0].value
+      var formdata = {"cred" : credentials, "startDate" : startDate, "endDate" : endDate};
       tableau.connectionData = JSON.stringify(formdata);
       tableau.submit();
     }; //end of proxyrequest
